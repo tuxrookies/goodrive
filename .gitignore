@@ -97,3 +97,9 @@ src/goodrive
 /config.h
 /config.log
 /config.status
+
+# IDE / Editor Specific Files
+# Eclipse
+/.project
+/.cproject
+/.settings
