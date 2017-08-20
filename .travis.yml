@@ -6,3 +6,4 @@ before_install:
   - autoconf
   - aclocal
   - automake
+script: ./configure && make
