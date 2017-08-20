@@ -1,3 +1,7 @@
+Build Info
+==========
+Latest Commit : ![Build Status](https://travis-ci.org/tuxrookies/goodrive.svg?branch=master)
+
 First Time Setup
 =================
 
