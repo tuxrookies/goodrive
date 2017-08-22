@@ -16,7 +16,7 @@ Generating the configure script (if the configure script is not already present)
 If you get `possibly undefined macro: AM_INIT_AUTOMAKE` error, try after running
  `autoreconf --install`
 2. `aclocal`
-3. `automake` (Sometimes, `autoheader` might need to be run if an error is encountered)
+3. `automake`
 
 Installation
 =============
