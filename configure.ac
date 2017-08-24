@@ -12,6 +12,12 @@ AC_PROG_CC
 
 # Checks for libraries.
 
+# Check for Packages.
+PKG_CHECK_MODULES([OPENSSL], [openssl])
+
+AC_SUBST([OPENSSL_CFLAGS])
+AC_SUBST([OPENSSL_LIBS])
+
 # Checks for header files.
 AC_CHECK_HEADERS([limits.h malloc.h stddef.h string.h unistd.h])
 

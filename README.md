@@ -9,7 +9,7 @@ Make sure that the following packages are installed (the command might differ
 depending upon your linux distro):
 
 ```
-sudo apt-get install build-essential automake libssl-dev
+sudo apt-get install build-essential automake libssl-dev pkg-config
 ```
 Generating the configure script (if the configure script is not already present).
 1. `autoconf`
