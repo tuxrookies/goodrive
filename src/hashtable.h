@@ -66,18 +66,18 @@ unsigned int ht_num_entries(hashtable hashtable);
  * If a Key-Value pair is already present, updates it to new value and returns
  *  the previous value.
  */
-void* ht_put(hashtable hashtable, void *key, void *value);
+void *ht_put(hashtable hashtable, void *key, void *value);
 
 /*
  * Get the value for the given key.
  */
-void* ht_get(hashtable hashtable, void *key);
+void *ht_get(hashtable hashtable, void *key);
 
 /*
  * Remove the Key-Value pair from the hashtable.
  * Returns the Value.
  */
-void* ht_remove(hashtable hashtable, void *key);
+void *ht_remove(hashtable hashtable, void *key);
 
 /*
  * Check whether a key is present in the hashtable.

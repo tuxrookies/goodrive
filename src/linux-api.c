@@ -46,30 +46,30 @@ struct watch_md5sum_handle_info {
 	// File Descriptor of the inotify instance
 	int fd;
 	// MD5 Context
-	MD5_CTX* md5_ctxt;
+	MD5_CTX *md5_ctxt;
 };
 typedef struct watch_md5sum_handle_info watch_md5sum_handle_info;
 
 /* Get the passwd entry */
-struct passwd* get_passwd_entry(uid_t uid);
+struct passwd *get_passwd_entry(uid_t uid);
 /* Get the group entry */
-struct group* get_group_entry(gid_t gid);
+struct group *get_group_entry(gid_t gid);
 
 /*
  * 1. Add a watch to the specified path, if it is a directory
  * 2. Update the MD5 Context with the same path
  */
-void __watch_and_update_md5ctx_handle(FTSENT* ftsent, void *handle_info);
+void __watch_and_update_md5ctx_handle(FTSENT *ftsent, void *handle_info);
 /* Add a watch to the specified path, if it is a directory */
-void __watch_dir_handle(FTSENT* ftsent, void *handle_info);
+void __watch_dir_handle(FTSENT *ftsent, void *handle_info);
 /* Update the MD5 Context with a path */
-void __update_md5ctx_path_handle(FTSENT* ftsent, void* handle_info);
+void __update_md5ctx_path_handle(FTSENT *ftsent, void *handle_info);
 
 /* Returns maxval if maxval > minval, else returns defval */
 size_t __get_max_value(size_t minval, size_t maxval, size_t defval);
 
-char* get_home_dir(uid_t uid) {
-	struct passwd* passwd_entry = get_passwd_entry(uid);
+char *get_home_dir(uid_t uid) {
+	struct passwd *passwd_entry = get_passwd_entry(uid);
 
 	if (passwd_entry != NULL) {
 		return passwd_entry->pw_dir;
@@ -77,7 +77,7 @@ char* get_home_dir(uid_t uid) {
 	return NULL;
 }
 
-char* get_home_dir_curruser() {
+char *get_home_dir_curruser() {
 	char *home_dir = goodrv_config.curr_user_home;
 	if (home_dir == NULL) {
 		home_dir = get_home_dir(geteuid());
@@ -86,11 +86,11 @@ char* get_home_dir_curruser() {
 	return home_dir;
 }
 
-char* get_config_dir_curruser() {
+char *get_config_dir_curruser() {
 	char *conf_dir = goodrv_config.config_dir;
 	if (conf_dir == NULL) {
-		char* home_dir = get_home_dir_curruser();
-		const char* CONF_DIR_SUFFIX = "/.goodrive/";
+		char *home_dir = get_home_dir_curruser();
+		const char *CONF_DIR_SUFFIX = "/.goodrive/";
 		conf_dir = malloc(strlen(home_dir) + strlen(CONF_DIR_SUFFIX) + 1);
 		strcpy(conf_dir, home_dir);
 		strcat(conf_dir, CONF_DIR_SUFFIX);
@@ -99,7 +99,7 @@ char* get_config_dir_curruser() {
 	return conf_dir;
 }
 
-char* md5sum_fsh(char* dir_path) {
+char *md5sum_fsh(char *dir_path) {
 	struct stat dir_stat;
 	if ((stat(dir_path, &dir_stat) == 0) && S_ISDIR(dir_stat.st_mode)) {
 		MD5_CTX md5_ctxt;
@@ -109,7 +109,7 @@ char* md5sum_fsh(char* dir_path) {
 
 		unsigned char md5sum_bytes[MD5_DIGEST_LENGTH];
 		MD5_Final(md5sum_bytes, &md5_ctxt);
-		char* md5sum = (char*) malloc(33);
+		char *md5sum = (char*) malloc(33);
 		for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
 			/*
 			 * For each byte in the array, there will be two hexadecimal characters.
@@ -121,8 +121,8 @@ char* md5sum_fsh(char* dir_path) {
 	return NULL;
 }
 
-char* md5sum_file(char *file_path) {
-	FILE* file = fopen(file_path, "r");
+char *md5sum_file(char *file_path) {
+	FILE *file = fopen(file_path, "r");
 	if (file != NULL) {
 		MD5_CTX md5_ctxt;
 		MD5_Init(&md5_ctxt);
@@ -138,7 +138,7 @@ char* md5sum_file(char *file_path) {
 		MD5_Final(md5sum_bytes, &md5_ctxt);
 
 		// Convert the MD5Sum from bytes form to char array.
-		char* md5sum = (char*) malloc(33);
+		char *md5sum = (char*) malloc(33);
 		for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
 			/*
 			 * For each byte in the array, there will be two hexadecimal characters.
@@ -160,9 +160,9 @@ void traverse_fsh(char *dirpath, void (*child_handle)(FTSENT*, void*), void *han
 	 * the symbolic links and find the MD5 checksum for the target file.
 	 * TODO Need to examine this decision.
 	 */
-	FTS* fts = fts_open(paths, FTS_PHYSICAL, NULL);
+	FTS *fts = fts_open(paths, FTS_PHYSICAL, NULL);
 	fts_read(fts);
-	FTSENT* child = fts_children(fts, 0);
+	FTSENT *child = fts_children(fts, 0);
 	while (child_handle != NULL && child != NULL) {
 		child_handle(child, handle_info);
 		if (S_ISDIR((child->fts_statp)->st_mode)
@@ -208,7 +208,7 @@ int has_file_permission_curruser(int permission, struct stat *file_stat) {
 	return has_file_permission(geteuid(), permission, file_stat);
 }
 
-char* get_full_path(FTSENT* ftsent) {
+char *get_full_path(FTSENT *ftsent) {
 	if (ftsent != NULL) {
 		short int normalized_path = 0;
 
@@ -257,7 +257,7 @@ int watch_md5sum_fsh(int fd, char **md5sum_ptr, char *dirpath) {
 			unsigned char md5sum_bytes[MD5_DIGEST_LENGTH];
 			MD5_Final(md5sum_bytes, &md5_ctxt);
 
-			char* md5sum = (char*) malloc(33);
+			char *md5sum = (char*) malloc(33);
 			for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
 				/*
 				 * For each byte in the array, there will be two hexadecimal characters.
@@ -272,14 +272,14 @@ int watch_md5sum_fsh(int fd, char **md5sum_ptr, char *dirpath) {
 }
 
 /* Watch the directory and update the MD5 Context */
-void __watch_and_update_md5ctx_handle(FTSENT* ftsent, void *handle_info) {
-	watch_md5sum_handle_info* hinfo = (watch_md5sum_handle_info *) handle_info;
+void __watch_and_update_md5ctx_handle(FTSENT *ftsent, void *handle_info) {
+	watch_md5sum_handle_info *hinfo = (watch_md5sum_handle_info *) handle_info;
 	__watch_dir_handle(ftsent, &hinfo->fd);
 	__update_md5ctx_path_handle(ftsent, hinfo->md5_ctxt);
 }
 
 /* Add a watch to a path, if it is a directory */
-void __watch_dir_handle(FTSENT* ftsent, void *handle_info) {
+void __watch_dir_handle(FTSENT *ftsent, void *handle_info) {
 	if (S_ISDIR((ftsent->fts_statp)->st_mode)) {
 		int *fd = (int *) handle_info;
 		if (*fd > 0) {
@@ -294,19 +294,19 @@ void __watch_dir_handle(FTSENT* ftsent, void *handle_info) {
 }
 
 /*
- * Update the MD5 context with the contents of the directory
+ * Update the MD5 context with the paths of directory's contents.
  */
-void __update_md5ctx_path_handle(FTSENT* ftsent, void *handle_info) {
-	MD5_CTX* md5_ctxt = handle_info;
-	char* full_path;
+void __update_md5ctx_path_handle(FTSENT *ftsent, void *handle_info) {
+	MD5_CTX *md5_ctxt = handle_info;
+	char *full_path;
 	full_path = get_full_path(ftsent);
 	MD5_Update(md5_ctxt, full_path, strlen(full_path));
 	MD5_Update(md5_ctxt, "\n", 1);	// newline character as the delimiter
 }
 
-struct passwd* get_passwd_entry(uid_t uid) {
-	struct passwd* passwd_entry;
-	char* buf;
+struct passwd *get_passwd_entry(uid_t uid) {
+	struct passwd *passwd_entry;
+	char *buf;
 	size_t buflen;
 
 	passwd_entry = malloc(sizeof(struct passwd));
@@ -328,9 +328,9 @@ struct passwd* get_passwd_entry(uid_t uid) {
 	return passwd_entry;
 }
 
-struct group* get_group_entry(gid_t gid) {
-	struct group* group_entry;
-	char* buf;
+struct group *get_group_entry(gid_t gid) {
+	struct group *group_entry;
+	char *buf;
 	size_t buflen;
 
 	group_entry = malloc(sizeof(struct group));

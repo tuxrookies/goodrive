@@ -46,8 +46,8 @@ struct hashtable {
  */
 struct bucket_elem {
 	struct bucket_elem *next;
-	void* key;
-	void* value;
+	void *key;
+	void *value;
 };
 
 /*
@@ -69,10 +69,10 @@ static void __insert_in_bucket(struct bucket_elem **bucket_ptr, int (*equals)(vo
  * Compute the hash code for the input string.
  */
 static int __hash_fn_string(void *input) {
-	char* input_str = input;
+	char *input_str = input;
 	int hash = 0;
 	int input_len = strlen(input_str);
-	for (char* ptr = input_str; ptr < (input_str + input_len); ptr++) {
+	for (char *ptr = input_str; ptr < (input_str + input_len); ptr++) {
 		hash = 31 * hash + *ptr;
 	}
 	return hash;
@@ -111,11 +111,11 @@ hashtable ht_create(ht_options options) {
 	return hashtable;
 }
 
-void* ht_put(hashtable hashtable, void *key, void *value) {
+void *ht_put(hashtable hashtable, void *key, void *value) {
 	int hash_code = hashtable->hash_fn(key);
 	int hash_value = hash_code % hashtable->table_size;
 	__check_and_resize(hashtable);
-	void* old_value = ht_get(hashtable, key);
+	void *old_value = ht_get(hashtable, key);
 	int exists_already = ht_exists(hashtable, key);
 	__insert_in_bucket(&hashtable->table[hash_value], hashtable->equals, key, value);
 	if (!exists_already) {
@@ -124,7 +124,7 @@ void* ht_put(hashtable hashtable, void *key, void *value) {
 	return old_value;
 }
 
-void* ht_get(hashtable hashtable, void *key) {
+void *ht_get(hashtable hashtable, void *key) {
 	int hash_code = hashtable->hash_fn(key);
 	int hash_value = hash_code % hashtable->table_size;
 	struct bucket_elem *elem = hashtable->table[hash_value];
@@ -138,7 +138,7 @@ void* ht_get(hashtable hashtable, void *key) {
 	return NULL;
 }
 
-void* ht_remove(hashtable hashtable, void *key) {
+void *ht_remove(hashtable hashtable, void *key) {
 	int hash_code = hashtable->hash_fn(key);
 	int hash_value = hash_code % hashtable->table_size;
 	struct bucket_elem **bucket_ptr = &hashtable->table[hash_value];

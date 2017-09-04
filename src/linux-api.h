@@ -37,22 +37,23 @@
 /*
  * Get the User's home directory
  */
-char* get_home_dir(uid_t uid);
+char *get_home_dir(uid_t uid);
 
 /*
  * Get the Home directory of the current user (effective user)
  */
-char* get_home_dir_curruser();
+char *get_home_dir_curruser();
 
 /*
  * Get the user's config Directory
  */
-char* get_config_dir_curruser();
+char *get_config_dir_curruser();
 
 /*
  * Find the MD5Sum of the file hierarchy within a directory recursively.
  */
-char* md5sum_fsh(char *dir_path);
+char *md5sum_fsh(char *dir_path);
+
 
 /*
  * Get the MD5 Sum of the file. Returns Null when the file is not accessible
@@ -60,7 +61,7 @@ char* md5sum_fsh(char *dir_path);
  *
  * path - path of the file for which the MD5 checksum is to be calculated.
  */
-char* md5sum_file(char* file_path);
+char *md5sum_file(char *file_path);
 
 /*
  * Traverse the File System Hierarchy within a directory recursively.
@@ -95,7 +96,7 @@ int has_file_permission_curruser(int permission, struct stat *file_stat);
 /*
  * Get the Full Path of the FTSENT
  */
-char* get_full_path(FTSENT* ftsent);
+char *get_full_path(FTSENT *ftsent);
 
 /*
  * Place watches in the File System Hierarchy represented by the dirpath,
