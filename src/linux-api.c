@@ -59,14 +59,14 @@ struct group *get_group_entry(gid_t gid);
  * 1. Add a watch to the specified path, if it is a directory
  * 2. Update the MD5 Context with the same path
  */
-void __watch_and_update_md5ctx_handle(FTSENT *ftsent, void *handle_info);
+static void watch_and_update_md5ctx_handle(FTSENT *ftsent, void *handle_info);
 /* Add a watch to the specified path, if it is a directory */
-void __watch_dir_handle(FTSENT *ftsent, void *handle_info);
+static void watch_dir_handle(FTSENT *ftsent, void *handle_info);
 /* Update the MD5 Context with a path */
-void __update_md5ctx_path_handle(FTSENT *ftsent, void *handle_info);
+static void update_md5ctx_path_handle(FTSENT *ftsent, void *handle_info);
 
 /* Returns maxval if maxval > minval, else returns defval */
-size_t __get_max_value(size_t minval, size_t maxval, size_t defval);
+static size_t get_max_value(size_t minval, size_t maxval, size_t defval);
 
 char *get_home_dir(uid_t uid) {
 	struct passwd *passwd_entry = get_passwd_entry(uid);
@@ -105,7 +105,7 @@ char *md5sum_fsh(char *dir_path) {
 		MD5_CTX md5_ctxt;
 		MD5_Init(&md5_ctxt);
 
-		traverse_fsh(dir_path, &__update_md5ctx_path_handle, &md5_ctxt);
+		traverse_fsh(dir_path, &update_md5ctx_path_handle, &md5_ctxt);
 
 		unsigned char md5sum_bytes[MD5_DIGEST_LENGTH];
 		MD5_Final(md5sum_bytes, &md5_ctxt);
@@ -252,7 +252,7 @@ int watch_md5sum_fsh(int fd, char **md5sum_ptr, char *dirpath) {
 			handle_info.fd = fd;
 			handle_info.md5_ctxt = &md5_ctxt;
 
-			traverse_fsh(dirpath, &__watch_and_update_md5ctx_handle, &handle_info);
+			traverse_fsh(dirpath, &watch_and_update_md5ctx_handle, &handle_info);
 
 			unsigned char md5sum_bytes[MD5_DIGEST_LENGTH];
 			MD5_Final(md5sum_bytes, &md5_ctxt);
@@ -272,14 +272,14 @@ int watch_md5sum_fsh(int fd, char **md5sum_ptr, char *dirpath) {
 }
 
 /* Watch the directory and update the MD5 Context */
-void __watch_and_update_md5ctx_handle(FTSENT *ftsent, void *handle_info) {
+static void watch_and_update_md5ctx_handle(FTSENT *ftsent, void *handle_info) {
 	watch_md5sum_handle_info *hinfo = (watch_md5sum_handle_info *) handle_info;
-	__watch_dir_handle(ftsent, &hinfo->fd);
-	__update_md5ctx_path_handle(ftsent, hinfo->md5_ctxt);
+	watch_dir_handle(ftsent, &hinfo->fd);
+	update_md5ctx_path_handle(ftsent, hinfo->md5_ctxt);
 }
 
 /* Add a watch to a path, if it is a directory */
-void __watch_dir_handle(FTSENT *ftsent, void *handle_info) {
+static void watch_dir_handle(FTSENT *ftsent, void *handle_info) {
 	if (S_ISDIR((ftsent->fts_statp)->st_mode)) {
 		int *fd = (int *) handle_info;
 		if (*fd > 0) {
@@ -296,7 +296,7 @@ void __watch_dir_handle(FTSENT *ftsent, void *handle_info) {
 /*
  * Update the MD5 context with the paths of directory's contents.
  */
-void __update_md5ctx_path_handle(FTSENT *ftsent, void *handle_info) {
+static void update_md5ctx_path_handle(FTSENT *ftsent, void *handle_info) {
 	MD5_CTX *md5_ctxt = handle_info;
 	char *full_path;
 	full_path = get_full_path(ftsent);
@@ -319,7 +319,7 @@ struct passwd *get_passwd_entry(uid_t uid) {
 	while (1) {
 		getpwuid_r(uid, passwd_entry, buf, buflen, &passwd_entry);
 		if (errno == ERANGE && buflen != ULONG_MAX) {
-			buflen = __get_max_value(buflen, buflen * 2, ULONG_MAX);
+			buflen = get_max_value(buflen, buflen * 2, ULONG_MAX);
 			buf = realloc(buf, buflen);
 		} else {
 			break;
@@ -343,7 +343,7 @@ struct group *get_group_entry(gid_t gid) {
 	while (1) {
 		getgrgid_r(gid, group_entry, buf, buflen, &group_entry);
 		if (errno == ERANGE && buflen != ULONG_MAX) {
-			buflen = __get_max_value(buflen, buflen*2, ULONG_MAX);
+			buflen = get_max_value(buflen, buflen*2, ULONG_MAX);
 			buf = realloc(buf, buflen);
 		} else {
 			break;
@@ -352,7 +352,7 @@ struct group *get_group_entry(gid_t gid) {
 	return group_entry;
 }
 
-size_t __get_max_value(size_t minval, size_t maxval, size_t defval) {
+static size_t get_max_value(size_t minval, size_t maxval, size_t defval) {
 	if (minval > maxval) {
 		return defval;
 	}

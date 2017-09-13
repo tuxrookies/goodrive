@@ -54,7 +54,7 @@ struct bucket_elem {
  * Check whether the addition of 1 more element would cross the threshold of load_factor. If so, increase
  * the table size for the HashTable.
  */
-static void __check_and_resize(hashtable hashtable);
+static void check_and_resize(hashtable hashtable);
 
 /*
  * Insert a Key-Value pair into the bucket.
@@ -63,12 +63,12 @@ static void __check_and_resize(hashtable hashtable);
  * key - Key
  * value - Value
  */
-static void __insert_in_bucket(struct bucket_elem **bucket_ptr, int (*equals)(void*, void*), void *key, void *value);
+static void insert_in_bucket(struct bucket_elem **bucket_ptr, int (*equals)(void*, void*), void *key, void *value);
 
 /*
  * Compute the hash code for the input string.
  */
-static int __hash_fn_string(void *input) {
+static int hash_fn_string(void *input) {
 	char *input_str = input;
 	int hash = 0;
 	int input_len = strlen(input_str);
@@ -81,7 +81,7 @@ static int __hash_fn_string(void *input) {
 /*
  * Returns 1 if two strings - value1 and value 2 are equal, else returns 0.
  */
-static int __equals_string(void *value1, void *value2) {
+static int equals_string(void *value1, void *value2) {
 	char *str1 = value1;
 	char *str2 = value2;
 	return strcmp(str1, str2) == 0;
@@ -91,8 +91,8 @@ ht_options default_ht_options() {
 	ht_options default_options = malloc(sizeof(struct hashtable_options));
 	default_options->table_size = 16;
 	default_options->load_factor = 0.75f;
-	default_options->hash_fn = &__hash_fn_string;
-	default_options->equals = &__equals_string;
+	default_options->hash_fn = &hash_fn_string;
+	default_options->equals = &equals_string;
 	return default_options;
 }
 
@@ -114,10 +114,10 @@ hashtable ht_create(ht_options options) {
 void *ht_put(hashtable hashtable, void *key, void *value) {
 	int hash_code = hashtable->hash_fn(key);
 	int hash_value = hash_code % hashtable->table_size;
-	__check_and_resize(hashtable);
+	check_and_resize(hashtable);
 	void *old_value = ht_get(hashtable, key);
 	int exists_already = ht_exists(hashtable, key);
-	__insert_in_bucket(&hashtable->table[hash_value], hashtable->equals, key, value);
+	insert_in_bucket(&hashtable->table[hash_value], hashtable->equals, key, value);
 	if (!exists_already) {
 		hashtable->num_entries++;
 	}
@@ -178,7 +178,7 @@ int ht_exists(hashtable hashtable, void *key) {
 	return 0;
 }
 
-static void __insert_in_bucket(struct bucket_elem **bucket_ptr,
+static void insert_in_bucket(struct bucket_elem **bucket_ptr,
 		int (*equals)(void*, void*), void *key, void *value) {
 	struct bucket_elem *elem = *bucket_ptr;
 
@@ -201,7 +201,7 @@ static void __insert_in_bucket(struct bucket_elem **bucket_ptr,
 	*bucket_ptr = new_elem;
 }
 
-static void __check_and_resize(hashtable hashtable) {
+static void check_and_resize(hashtable hashtable) {
 	int threshold = hashtable->table_size * hashtable->load_factor;
 
 	/* If the addition of an entry does not cross the threshold, do not increase the table size */
@@ -227,7 +227,7 @@ static void __check_and_resize(hashtable hashtable) {
 		elem = *elem_ptr;
 		while (elem) {
 			new_index = hashtable->hash_fn(elem->key) % new_size;
-			__insert_in_bucket(new_table + new_index, hashtable->equals,
+			insert_in_bucket(new_table + new_index, hashtable->equals,
 					elem->key, elem->value);
 			temp = elem;
 			elem = elem->next;
