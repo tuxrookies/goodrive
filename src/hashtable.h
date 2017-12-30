@@ -52,7 +52,11 @@ typedef struct hashtable_options *ht_options;
 ht_options default_ht_options();
 
 /*
- * The options for creating the hashtable.
+ * Create a hashtable with the given options
+ *
+ * Params:
+ * options - The options for creating the hashtable. Default options will be used
+ * 			 if this pointer is null.
  */
 hashtable ht_create(ht_options options);
 
@@ -63,8 +67,8 @@ unsigned int ht_num_entries(hashtable hashtable);
 
 /*
  * Insert a Key-Value pair into the hashtable.
- * If a Key-Value pair is already present, updates it to new value and returns
- *  the previous value.
+ * If the Key is already present, updates it to new value and returns
+ *  the previous value. Else returns NULL.
  */
 void *ht_put(hashtable hashtable, void *key, void *value);
 
@@ -75,7 +79,7 @@ void *ht_get(hashtable hashtable, void *key);
 
 /*
  * Remove the Key-Value pair from the hashtable.
- * Returns the Value.
+ * Returns the Existing Value.
  */
 void *ht_remove(hashtable hashtable, void *key);
 

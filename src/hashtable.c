@@ -112,9 +112,9 @@ hashtable ht_create(ht_options options) {
 }
 
 void *ht_put(hashtable hashtable, void *key, void *value) {
+	check_and_resize(hashtable);
 	int hash_code = hashtable->hash_fn(key);
 	int hash_value = hash_code % hashtable->table_size;
-	check_and_resize(hashtable);
 	void *old_value = ht_get(hashtable, key);
 	int exists_already = ht_exists(hashtable, key);
 	insert_in_bucket(&hashtable->table[hash_value], hashtable->equals, key, value);
@@ -150,6 +150,7 @@ void *ht_remove(hashtable hashtable, void *key) {
 			*bucket_ptr = elem->next;
 
 			hashtable->num_entries--;
+			free(elem);
 			return value;
 		}
 
