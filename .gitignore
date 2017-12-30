@@ -91,6 +91,8 @@ Makefile.in
 # Custom Additions
 Makefile
 *.Po
+*.log
+*.trs
 bin/
 # goodrive binary within the src directory, when running make install
 src/goodrive
