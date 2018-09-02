@@ -29,13 +29,14 @@
 #include <grp.h>
 #include <limits.h>
 #include <malloc.h>
-#include <openssl/md5.h>
 #include <pwd.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/inotify.h>
 #include <unistd.h>
+
+#include <openssl/md5.h>
 
 #include "config.h"
 
@@ -99,6 +100,26 @@ char *get_config_dir_curruser() {
 	return conf_dir;
 }
 
+char *get_abs_path(char *parent_dir, char *file_name) {
+	char *result = NULL;
+	if (parent_dir != NULL && file_name != NULL) {
+		int pdir_len = strlen(parent_dir);
+		int fname_len = strlen(file_name);
+
+		if (parent_dir[pdir_len - 1] == '/') {
+			result = malloc(pdir_len + fname_len + 1);
+			memcpy(result, parent_dir, pdir_len);
+			memcpy(result + pdir_len, file_name, fname_len + 1);
+		} else {
+			result = malloc(pdir_len + fname_len + 2);
+			memcpy(result, parent_dir, pdir_len);
+			result[pdir_len] = '/';
+			memcpy(result + pdir_len + 1, file_name, fname_len + 1);
+		}
+	}
+	return result;
+}
+
 char *md5sum_fsh(char *dir_path) {
 	struct stat dir_stat;
 	if ((stat(dir_path, &dir_stat) == 0) && S_ISDIR(dir_stat.st_mode)) {
@@ -147,6 +168,28 @@ char *md5sum_file(char *file_path) {
 		}
 		fclose(file);
 
+		return md5sum;
+	}
+	return NULL;
+}
+
+char *md5sum_str(char *input) {
+	if (input != NULL) {
+		MD5_CTX md5_ctxt;
+		MD5_Init(&md5_ctxt);
+		MD5_Update(&md5_ctxt, input, strlen(input));
+
+		unsigned char md5sum_bytes[MD5_DIGEST_LENGTH];
+		MD5_Final(md5sum_bytes, &md5_ctxt);
+
+		// Convert the MD5Sum from bytes form to char array.
+		char *md5sum = (char*) malloc(33);
+		for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
+			/*
+			 * For each byte in the array, there will be two hexadecimal characters.
+			 */
+			sprintf(md5sum + (i * 2), "%02x", md5sum_bytes[i]);
+		}
 		return md5sum;
 	}
 	return NULL;
@@ -318,7 +361,7 @@ struct passwd *get_passwd_entry(uid_t uid) {
 
 	while (1) {
 		getpwuid_r(uid, passwd_entry, buf, buflen, &passwd_entry);
-		if (errno == ERANGE && buflen != ULONG_MAX) {
+		if (errno == ERANGE && buflen < ULONG_MAX) {
 			buflen = get_max_value(buflen, buflen * 2, ULONG_MAX);
 			buf = realloc(buf, buflen);
 		} else {

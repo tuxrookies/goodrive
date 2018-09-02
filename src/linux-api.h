@@ -50,6 +50,11 @@ char *get_home_dir_curruser();
 char *get_config_dir_curruser();
 
 /*
+ * Get the absolute path for a file.
+ */
+char *get_abs_path(char *parent_dir, char *file_name);
+
+/*
  * Find the MD5Sum of the file hierarchy within a directory recursively.
  */
 char *md5sum_fsh(char *dir_path);
@@ -62,6 +67,13 @@ char *md5sum_fsh(char *dir_path);
  * path - path of the file for which the MD5 checksum is to be calculated.
  */
 char *md5sum_file(char *file_path);
+
+/*
+ * Calculate the MD5 sum for a given character array.
+ *
+ * input - the character array for which the MD5Sum should be calculated.
+ */
+char *md5sum_str(char *input);
 
 /*
  * Traverse the File System Hierarchy within a directory recursively.
