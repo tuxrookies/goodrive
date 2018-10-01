@@ -23,11 +23,20 @@
  * along with GooDrive.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include "test_hashtable.h"
+#include <assert.h>
+#include <linux-api.h>
+#include <string.h>
+
+void test_md5sum_str(void);
 
 int main() {
-	setvbuf(stdout, NULL, _IONBF, 0);
-	test_hashtable();
+	test_md5sum_str();
 	return 0;
+}
+
+void test_md5sum_str(void) {
+	/* MD5Sum for 'blah' */
+	const char *expected = "6f1ed002ab5595859014ebf0951522d9";
+	const char *retval = md5sum_str("blah");
+	assert(strcmp(expected, retval) == 0);
 }

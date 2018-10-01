@@ -24,10 +24,9 @@
  */
 
 #include <assert.h>
+#include <hashtable.h>
 #include <stdio.h>
 #include <string.h>
-#include "test_hashtable.h"
-#include "../src/hashtable.h"
 
 /* Helper functions for the test cases */
 /* Get the Hash Table options with terrible hash function */
@@ -53,6 +52,14 @@ void test_hashtable_growth();
 void test_hashtable_removal();
 /* Test the hashtable removal, with terrible hash function */
 void test_hashtable_removal_terrible_hashfn();
+
+/* Hashtable Test suite */
+void test_hashtable();
+
+int main() {
+	test_hashtable();
+	return 0;
+}
 
 /* Register all the test functions here */
 void test_hashtable() {
