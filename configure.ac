@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([GooDrive], [0.1b], [pradeep.tux@gmail.com])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_SRCDIR([src/linux-api.c])
 AC_CONFIG_HEADERS([config.h])
 
