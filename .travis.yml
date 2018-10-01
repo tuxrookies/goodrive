@@ -1,7 +1,7 @@
 language: c
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libssl-dev
+  - sudo apt-get install -qq libssl-dev libjson-c-dev
   - autoreconf --install
   - autoconf
   - aclocal
