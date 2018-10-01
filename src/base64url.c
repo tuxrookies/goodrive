@@ -34,7 +34,7 @@ static char base64_alphabets[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', '
                                     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                                     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'};
 
-char *base64url_encode(const unsigned char *input_str, size_t input_len, size_t *output_len) {
+char *base64url_encode(const unsigned char *input_str, ssize_t input_len, size_t *output_len) {
     if (input_len == 0) {
         *output_len = 0;
         return NULL;
@@ -51,7 +51,7 @@ char *base64url_encode(const unsigned char *input_str, size_t input_len, size_t 
         *output_len = 4*num_complete_triplets + (input_len - (num_complete_triplets*3)) + 1;
     }
 
-    size_t in = 0, out = 0;
+    ssize_t in = 0, out = 0;
 
     /* Allocate 1 additional space for NULL character. */
     char *encoded_str = malloc((*output_len) + 1);
@@ -69,6 +69,7 @@ char *base64url_encode(const unsigned char *input_str, size_t input_len, size_t 
 
     // For the complete triplets
     for (in=0; in<input_len-3;) {
+        // printf("%d < %d ? --> %d \n", in, (((ssize_t)input_len)-3), (in<(((ssize_t)input_len)-3)));
         in_1 = input_str[in++];
         in_2 = input_str[in++];
         in_3 = input_str[in++];
@@ -107,6 +108,6 @@ char *base64url_encode(const unsigned char *input_str, size_t input_len, size_t 
         }
     }
 
-    encoded_str[*output_len] = NULL;
+    encoded_str[*output_len] = 0;
     return encoded_str;
 }

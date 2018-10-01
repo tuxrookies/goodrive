@@ -24,4 +24,4 @@
  */
 
 /* Encode the input string in the Base64URL encoding format, without the padding character */
-char *base64url_encode(const unsigned char *input_str, size_t input_len, size_t *output_len);
+char *base64url_encode(const unsigned char *input_str, ssize_t input_len, size_t *output_len);
