@@ -7,6 +7,6 @@ AM_LDFLAGS =
 
 # GooDrive Binaries
 bin_PROGRAMS = goodrive
-goodrive_SOURCES = auth.h auth.c base64url.h base64url.c config.h linux-api.h linux-api.c jwt.h jwt.c main.c
+goodrive_SOURCES = base64url.h base64url.c config.h linux-api.h linux-api.c jwt.h jwt.c main.c
 
 goodrive_LDADD = $(OPENSSL_LIBS) -ljson-c
